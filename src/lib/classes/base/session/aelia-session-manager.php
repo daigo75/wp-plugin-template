@@ -9,12 +9,11 @@ if(class_exists('Aelia\EDD\Aelia_SessionManager')) {
 use \Easy_Digital_Downloads;
 
 /**
- * A simple Session handler. Compatible with both WooCommerce 2.0 and earlier.
+ * A simple Session handler.
  */
 class Aelia_SessionManager {
 	/**
-	 * Safely store data into the session. Compatible with WooCommerce 2.0+ and
-	 * backwards compatible with previous versions.
+	 * Safely store data into the session.
 	 *
 	 * @param string key The Key of the value to retrieve.
 	 * @param mixed value The value to set.
@@ -24,8 +23,7 @@ class Aelia_SessionManager {
 	}
 
 	/**
-	 * Safely retrieve data from the session. Compatible with WooCommerce 2.0+ and
-	 * backwards compatible with previous versions.
+	 * Safely retrieve data from the session.
 	 *
 	 * @param string key The Key of the value to retrieve.
 	 * @param mixed default The default value to return if the key is not found.
@@ -44,8 +42,7 @@ class Aelia_SessionManager {
 	}
 
 	/**
-	 * Safely remove data from the session. Compatible with WooCommerce 2.0+ and
-	 * backwards compatible with previous versions.
+	 * Safely remove data from the session.
 	 *
 	 * @param string key The Key of the value to retrieve.
 	 */

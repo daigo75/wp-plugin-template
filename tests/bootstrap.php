@@ -52,7 +52,7 @@ if(file_exists($composer_autoloader)) {
 
 // Try to activate all required plugins
 $required_plugins = array(
-	'woocommerce/woocommerce.php',
+	'easy-digital-downloads/easy-digital-downloads.php',
 );
 
 enable_required_plugins($required_plugins);

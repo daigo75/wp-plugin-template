@@ -1,22 +1,27 @@
 <?php
 
+use Aelia\EDD\Aelia_Plugin;
+use Aelia\EDD\Settings_Renderer;
+use Aelia\EDD\Settings;
+use Aelia\EDD\Messages;
+
 /**
  * Tests for the base plugin class.
  */
-class WC_Aelia_Plugin_Test extends WP_UnitTestCase {
+class Aelia_Plugin_Test extends WP_UnitTestCase {
 	const SETTINGS_KEY = 'wc-aelia-plugin-test';
 	const TEXT_DOMAIN = 'wc-aelia-plugin-test';
 
 	public function setUp() {
 		parent::setUp();
 
-		$settings_page_renderer = new WC_Aelia_Settings_Renderer();
-		$this->settings = new WC_Aelia_Settings(self::SETTINGS_KEY,
+		$settings_page_renderer = new Settings_Renderer();
+		$this->settings = new Settings(self::SETTINGS_KEY,
 																						self::TEXT_DOMAIN,
 																						$settings_page_renderer);
-		$this->messages = new WC_Aelia_Messages();
+		$this->messages = new Messages();
 
-		$this->plugin = new WC_Aelia_Plugin($this->settings, $this->messages);
+		$this->plugin = new Aelia_Plugin($this->settings, $this->messages);
 
 		$plugin_class = get_class($this->plugin);
 		$GLOBALS[$plugin_class::$plugin_slug] = $this->plugin;
@@ -48,7 +53,7 @@ class WC_Aelia_Plugin_Test extends WP_UnitTestCase {
 	}
 
 	public function test_get_error_message() {
-		$message = $this->plugin->get_error_message(WC_Aelia_Messages::ERR_FILE_NOT_FOUND);
+		$message = $this->plugin->get_error_message(Aelia\EDD\Messages::ERR_FILE_NOT_FOUND);
 		$this->assertTrue(!empty($message));
 	}
 
@@ -62,11 +67,6 @@ class WC_Aelia_Plugin_Test extends WP_UnitTestCase {
 		$frontend_styles_registered = wp_style_is(WC_Aelia_Plugin::$plugin_slug . '-frontend', 'registered');
 		$this->assertTrue($frontend_styles_registered);
 
-		$this->assertTrue(true);
-	}
-
-	public function test_woocommerce_loaded() {
-		$this->plugin->woocommerce_loaded();
 		$this->assertTrue(true);
 	}
 
@@ -111,8 +111,8 @@ class WC_Aelia_Plugin_Test extends WP_UnitTestCase {
 		$this->assertTrue(true);
 	}
 
-	public function test_is_woocommerce_active() {
-		$this->assertTrue(is_bool(WC_Aelia_Plugin::is_woocommerce_active()));
+	public function test_is_edd_active() {
+		$this->assertTrue(is_bool(WC_Aelia_Plugin::is_edd_active()));
 	}
 
 	public function test_path() {

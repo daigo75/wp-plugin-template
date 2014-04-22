@@ -1,10 +1,10 @@
-WooCommerce Template Plugin
+Easy Digital Downloads Template Plugin
 ===
-**Tags**: woocommerce, authipay, authipay connect
-**Requires at least**: 3.4
-**Tested up to**: 3.6
+**Tags**: edd, easydigitaldownloads
+**Requires at least**: 3.6
+**Tested up to**: 3.9
 
-Allows WooCommerce to accept payments using AIB Authipay Connect gateway.
+// TODO Add short description
 
 Description
 ---
@@ -12,11 +12,11 @@ Description
 
 **Requirements**
 
-* WordPress 3.4+ (plugin has been tested up to WordPress 3.6)
+* WordPress 3.6+
 * PHP 5.3+
 * PHP Extensions
  * CURL
-* WooCommerce 1.6/2.0
+* EasyDigitalDownloads 1.9.x or later
 
 Installation
 ---

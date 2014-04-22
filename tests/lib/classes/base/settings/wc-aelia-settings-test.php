@@ -1,9 +1,12 @@
 <?php
 
+use Aelia\EDD\Settings_Renderer;
+use Aelia\EDD\Settings;
+
 /**
  * Tests for the base settings controller.
  */
-class WC_Aelia_Settings_Test extends WP_UnitTestCase {
+class Settings_Test extends WP_UnitTestCase {
 	const SETTINGS_KEY = 'test_settings';
 	const TEXT_DOMAIN = 'test_domain';
 
@@ -24,10 +27,10 @@ class WC_Aelia_Settings_Test extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$renderer = new WC_Aelia_Settings_Renderer();
-		$this->settings = new WC_Aelia_Settings(self::SETTINGS_KEY,
-																						self::TEXT_DOMAIN,
-																						$renderer);
+		$renderer = new Settings_Renderer();
+		$this->settings = new Settings(self::SETTINGS_KEY,
+																	 self::TEXT_DOMAIN,
+																	 $renderer);
 	}
 
 	public function test_default_settings() {
