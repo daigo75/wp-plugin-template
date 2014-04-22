@@ -1,12 +1,14 @@
-<?php if(!defined('ABSPATH')) exit; // Exit if accessed directly
+<?php
+namespace Aelia\EDD;
+if(!defined('ABSPATH')) exit; // Exit if accessed directly
 
 /**
  * Implements a base class to store and handle the messages returned by the
  * plugin. This class is used to extend the basic functionalities provided by
  * standard WP_Error class.
  */
-class WC_Aelia_Messages {
-	const DEFAULT_TEXTDOMAIN = 'woocommerce-aelia';
+class Messages {
+	const DEFAULT_TEXTDOMAIN = 'edd-aelia';
 
 	// Result constants
 	const RES_OK = 0;
@@ -21,7 +23,7 @@ class WC_Aelia_Messages {
 
 	public function __construct($text_domain = self::DEFAULT_TEXTDOMAIN) {
 		$this->_text_domain = $text_domain;
-		$this->_wp_error = new WP_Error();
+		$this->_wp_error = new \WP_Error();
 		$this->load_error_messages();
 	}
 
@@ -58,7 +60,7 @@ class WC_Aelia_Messages {
 	}
 
 	/**
-	 * Calls WC_Aelia_Messages::load_messages(). Implemented for backward
+	 * Calls Aelia\EDD\Messages::load_messages(). Implemented for backward
 	 * compatibility.
 	 */
 	public function load_error_messages() {
@@ -66,7 +68,7 @@ class WC_Aelia_Messages {
 	}
 
 	/**
-	 * Calls WC_Aelia_Messages::add_message(). Implemented for backward
+	 * Calls Aelia\EDD\Messages::add_message(). Implemented for backward
 	 * compatibility.
 	 */
 	public function add_error_message($error_code, $error_message) {
@@ -74,7 +76,7 @@ class WC_Aelia_Messages {
 	}
 
 	/**
-	 * Calls WC_Aelia_Messages::get_message(). Implemented for backward
+	 * Calls Aelia\EDD\Messages::get_message(). Implemented for backward
 	 * compatibility.
 	 */
 	public function get_error_message($error_code) {

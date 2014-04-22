@@ -9,8 +9,8 @@ use Aelia\EDD\Messages;
  * Tests for the base plugin class.
  */
 class Aelia_Plugin_Test extends WP_UnitTestCase {
-	const SETTINGS_KEY = 'wc-aelia-plugin-test';
-	const TEXT_DOMAIN = 'wc-aelia-plugin-test';
+	const SETTINGS_KEY = 'edd-aelia-plugin-test';
+	const TEXT_DOMAIN = 'edd-aelia-plugin-test';
 
 	public function setUp() {
 		parent::setUp();
@@ -43,12 +43,12 @@ class Aelia_Plugin_Test extends WP_UnitTestCase {
 	}
 
 	public function test_settings() {
-		$controller = WC_Aelia_Plugin::settings();
+		$controller = Aelia_Plugin::settings();
 		$this->assertSame($controller, $this->settings);
 	}
 
 	public function test_messages() {
-		$controller = WC_Aelia_Plugin::messages();
+		$controller = Aelia_Plugin::messages();
 		$this->assertSame($controller, $this->messages);
 	}
 
@@ -61,10 +61,10 @@ class Aelia_Plugin_Test extends WP_UnitTestCase {
 	public function test_wordpress_loaded() {
 		$this->plugin->wordpress_loaded();
 
-		$frontend_script_registered = wp_script_is(WC_Aelia_Plugin::$plugin_slug . '-frontend', 'registered');
+		$frontend_script_registered = wp_script_is(Aelia_Plugin::$plugin_slug . '-frontend', 'registered');
 		$this->assertTrue($frontend_script_registered);
 
-		$frontend_styles_registered = wp_style_is(WC_Aelia_Plugin::$plugin_slug . '-frontend', 'registered');
+		$frontend_styles_registered = wp_style_is(Aelia_Plugin::$plugin_slug . '-frontend', 'registered');
 		$this->assertTrue($frontend_styles_registered);
 
 		$this->assertTrue(true);
@@ -89,7 +89,7 @@ class Aelia_Plugin_Test extends WP_UnitTestCase {
 		$this->plugin->load_admin_scripts();
 
 		// Base plugin should NOT enqueue Admin styles
-		$admin_styles_enqueued = wp_style_is(WC_Aelia_Plugin::$plugin_slug . '-admin', 'enqueued');
+		$admin_styles_enqueued = wp_style_is(Aelia_Plugin::$plugin_slug . '-admin', 'enqueued');
 		$this->assertFalse($admin_styles_enqueued);
 	}
 
@@ -97,7 +97,7 @@ class Aelia_Plugin_Test extends WP_UnitTestCase {
 		$this->plugin->load_frontend_scripts();
 
 		// Base plugin should NOT enqueue Admin scripts
-		$frontend_styles_enqueued = wp_style_is(WC_Aelia_Plugin::$plugin_slug . '-frontend', 'enqueued');
+		$frontend_styles_enqueued = wp_style_is(Aelia_Plugin::$plugin_slug . '-frontend', 'enqueued');
 		$this->assertFalse($frontend_styles_enqueued);
 	}
 
@@ -112,7 +112,7 @@ class Aelia_Plugin_Test extends WP_UnitTestCase {
 	}
 
 	public function test_is_edd_active() {
-		$this->assertTrue(is_bool(WC_Aelia_Plugin::is_edd_active()));
+		$this->assertTrue(is_bool(Aelia_Plugin::is_edd_active()));
 	}
 
 	public function test_path() {
@@ -129,7 +129,7 @@ class Aelia_Plugin_Test extends WP_UnitTestCase {
 	 * @expectedException Aelia_NotImplementedException
 	 */
 	public function test_factory() {
-		WC_Aelia_Plugin::factory();
+		Aelia_Plugin::factory();
 	}
 
 	public function test_plugin_dir() {

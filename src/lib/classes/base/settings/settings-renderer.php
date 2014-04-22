@@ -1,10 +1,14 @@
-<?php if(!defined('ABSPATH')) exit; // Exit if accessed directly
+<?php
+namespace Aelia\EDD;
+if(!defined('ABSPATH')) exit; // Exit if accessed directly
+
+use \InvalidArgumentException;
 
 /**
  * Implements a class that will render the settings page.
  */
-class WC_Aelia_Settings_Renderer {
-	// @var WC_Aelia_Settings The settings controller which will handle the settings.
+class Settings_Renderer {
+	// @var Aelia\EDD\Settings The settings controller which will handle the settings.
 	protected $_settings_controller;
 	// @var string The text domain to be used for localisation.
 	protected $_textdomain = '';
@@ -13,6 +17,9 @@ class WC_Aelia_Settings_Renderer {
 
 	// @var string The default tab ID used if none is specified when class is instantiated.
 	const DEFAULT_SETTINGS_TAB_ID = 'default';
+
+	// @var string The ID of the EDD menu in the admin section. Used to add submenus.
+	const EDD_MENU_ITEM_ID = 'edit.php?post_type=download';
 
 	// @var array A list of tabs used to organise the settings sections.
 	protected $_settings_tabs = array();
@@ -31,7 +38,7 @@ class WC_Aelia_Settings_Renderer {
 	 * @return array|mixed The plugin settings, or the value of the specified
 	 * setting.
 	 *
-	 * @see WC_Aelia_Settings::current_settings().
+	 * @see Aelia\EDD\Settings::current_settings().
 	 */
 	public function current_settings($key = null, $default = null) {
 
@@ -49,7 +56,7 @@ class WC_Aelia_Settings_Renderer {
 	 * @return array|mixed The default settings, or the value of the specified
 	 * setting.
 	 *
-	 * @see WC_Aelia_Settings::default_settings().
+	 * @see Aelia\EDD\Settings::default_settings().
 	 */
 	protected function default_settings($key = null, $default = null) {
 		return $this->_settings_controller->current_settings($key, $default);
@@ -60,7 +67,7 @@ class WC_Aelia_Settings_Renderer {
 	 *
 	 * @param string default_tab the default tab inside which sections should be
 	 * rendered, unless a different tab is specified for them.
-	 * @return WC_Aelia_Settings.
+	 * @return Aelia\EDD\Settings.
 	 */
 	public function __construct($default_tab = self::DEFAULT_SETTINGS_TAB_ID) {
 		$this->_default_tab = $default_tab;
@@ -290,11 +297,11 @@ class WC_Aelia_Settings_Renderer {
 	}
 
 	/**
-	 * Adds a link to Settings Page in WooCommerce Admin menu.
+	 * Adds a link to Settings Page in EDD Admin menu.
 	 */
 	public function add_settings_page() {
 		$settings_page = add_submenu_page(
-			'woocommerce',
+			self::EDD_MENU_ITEM_ID,
 	    $this->page_title(),
 	    $this->menu_title(),
 			'manage_options',
@@ -556,9 +563,9 @@ class WC_Aelia_Settings_Renderer {
 	/**
 	 * Initialises the settings page.
 	 *
-	 * @param WC_Aelia_Settings settings_controller The settings controller.
+	 * @param Aelia\EDD\Settings settings_controller The settings controller.
 	 */
-	public function init_settings_page(WC_Aelia_Settings $settings_controller) {
+	public function init_settings_page(Aelia\EDD\Settings $settings_controller) {
 		$this->_settings_controller = $settings_controller;
 		$this->_settings_key = $this->_settings_controller->settings_key;
 		$this->_textdomain = $this->_settings_controller->textdomain;

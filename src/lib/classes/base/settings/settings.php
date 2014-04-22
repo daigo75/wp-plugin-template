@@ -1,10 +1,12 @@
-<?php if(!defined('ABSPATH')) exit; // Exit if accessed directly
+<?php
+namespace Aelia\EDD;
+if(!defined('ABSPATH')) exit; // Exit if accessed directly
 
 /**
  * Implements a base class to store and handle the messages returned by the
  * plugin.
  */
-class WC_Aelia_Settings {
+class Settings {
 	// @var string The text domain to be used for localisation.
 	public $textdomain = '';
 	// @var string The key to identify plugin settings amongst WP options.
@@ -26,9 +28,9 @@ class WC_Aelia_Settings {
 	 * @param string settings_key The key used to store and retrieve the plugin settings.
 	 * @param string textdomain The text domain used for localisation.
 	 * @param string renderer The renderer to use to generate the settings page.
-	 * @return WC_Aelia_Settings.
+	 * @return Aelia\EDD\Settings
 	 */
-	public function __construct($settings_key, $textdomain = '', WC_Aelia_Settings_Renderer $renderer) {
+	public function __construct($settings_key, $textdomain = '', Aelia\EDD\Settings_Renderer $renderer) {
 		$this->settings_key = $settings_key;
 		$this->textdomain = $textdomain;
 		$this->_renderer = $renderer;

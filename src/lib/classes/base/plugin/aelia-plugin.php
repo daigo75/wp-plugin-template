@@ -1,10 +1,16 @@
-<?php if(!defined('ABSPATH')) exit; // Exit if accessed directly
+<?php
+namespace Aelia\EDD;
 
-if(class_exists('WC_Aelia_Plugin')) {
+if(!defined('ABSPATH')) exit; // Exit if accessed directly
+
+if(class_exists('Aelia\EDD\Aelia_Plugin')) {
 	return;
 }
 
-interface IWC_Aelia_Plugin {
+use \Easy_Digital_Downloads;
+use \ReflectionClass;
+
+interface IAelia_Plugin {
 	public function settings_controller();
 	public function messages_controller();
 	public static function instance();
@@ -13,23 +19,22 @@ interface IWC_Aelia_Plugin {
 	public static function cleanup();
 }
 
-
 // Load general functions file
 require_once('general_functions.php');
 
 /**
- * Implements a base plugin class to be used to implement WooCommerce plugins.
+ * Implements a base plugin class to be used to implement Easy Digital Downloads plugins.
  */
-class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
+class Aelia_Plugin implements IAelia_Plugin {
 	// @var string The plugin version.
 	public static $version = '0.8.2';
 
 	// @var string The plugin slug
-	public static $plugin_slug = 'wc-aelia-plugin';
+	public static $plugin_slug = 'edd-aelia-plugin';
 	// @var string The plugin text domain
-	public static $text_domain = 'wc-aelia-plugin';
+	public static $text_domain = 'edd-aelia-plugin';
 	// @var string The plugin name
-	public static $plugin_name = 'wc-aelia-plugin';
+	public static $plugin_name = 'edd-aelia-plugin';
 
 	// @var array Holds a list of the errors related to missing requirements
 	public static $requirements_errors = array();
@@ -37,9 +42,9 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 	// @var string The base name of the plugin directory
 	protected $plugin_directory;
 
-	// @var WC_Aelia_Settings The object that will handle plugin's settings.
+	// @var Aelia\EDD\Settings The object that will handle plugin's settings.
 	protected $_settings_controller;
-	// @var WC_Aelia_Messages The object that will handle plugin's messages.
+	// @var Aelia\EDD\Messages The object that will handle plugin's messages.
 	protected $_messages_controller;
 	// @var Aelia_SessionManager The session manager
 	protected $_session;
@@ -53,19 +58,18 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 	);
 
 	/**
-	 * Returns global instance of woocommerce.
+	 * Returns global instance of Easy Digital Downloads.
 	 *
-	 * @return object The global instance of woocommerce.
+	 * @return object The global instance of EDD.
 	 */
-	protected function woocommerce() {
-		global $woocommerce;
-		return $woocommerce;
+	protected function edd() {
+		return Easy_Digital_Downloads::instance();
 	}
 
 	/**
 	 * Returns the session manager.
 	 *
-	 * @return object The global instance of woocommerce.
+	 * @return Aelia_SessionManager The session manager instance.
 	 */
 	protected function session() {
 		if(empty($this->_session)) {
@@ -77,7 +81,7 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 	/**
 	 * Returns the instance of the Settings Controller used by the plugin.
 	 *
-	 * @return WC_Aelia_Settings.
+	 * @return Aelia_Settings.
 	 */
 	public function settings_controller() {
 		return $this->_settings_controller;
@@ -86,7 +90,7 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 	/**
 	 * Returns the instance of the Messages Controller used by the plugin.
 	 *
-	 * @return WC_Aelia_Messages.
+	 * @return Aelia_Messages.
 	 */
 	public function messages_controller() {
 		return $this->_messages_controller;
@@ -95,7 +99,7 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 	/**
 	 * Returns the instance of the plugin.
 	 *
-	 * @return WC_Aelia_Plugin.
+	 * @return Aelia_Plugin.
 	 */
 	public static function instance() {
 		return $GLOBALS[static::$plugin_slug];
@@ -115,7 +119,7 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 	/**
 	 * Returns the Settings Controller used by the plugin.
 	 *
-	 * @return WC_Aelia_Settings.
+	 * @return Aelia\EDD\Settings.
 	 */
 	public static function settings() {
 		return self::instance()->settings_controller();
@@ -124,7 +128,7 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 	/**
 	 * Returns the Messages Controller used by the plugin.
 	 *
-	 * @return WC_Aelia_Messages.
+	 * @return Aelia\EDD\Messages.
 	 */
 	public static function messages() {
 		return self::instance()->messages_controller();
@@ -165,9 +169,13 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 	}
 
 		/**
-	 * Sets the hook handlers for WooCommerce and WordPress.
+	 * Sets the hook handlers for EDD and WordPress.
 	 */
 	protected function set_hooks() {
+		add_action('init', array($this, 'wordpress_loaded'));
+		// Called after all plugins have loaded
+		add_action('plugins_loaded', array($this, 'plugins_loaded'));
+
 		add_action('admin_enqueue_scripts', array($this, 'load_admin_scripts'));
 		add_action('wp_enqueue_scripts', array($this, 'load_frontend_scripts'));
 	}
@@ -245,9 +253,9 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 	/**
 	 * Constructor.
 	 *
-	 * @param WC_Aelia_Settings settings_controller The controller that will handle
+	 * @param Aelia\EDD\Settings settings_controller The controller that will handle
 	 * the plugin settings.
-	 * @param WC_Aelia_Messages messages_controller The controller that will handle
+	 * @param Aelia\EDD\Messages messages_controller The controller that will handle
 	 * the messages produced by the plugin.
 	 */
 	public function __construct($settings_controller = null, $messages_controller = null) {
@@ -264,15 +272,8 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 		register_activation_hook(__FILE__, array($this, 'setup'));
 		register_uninstall_hook(__FILE__, array(get_class($this), 'cleanup'));
 
-		// called only after woocommerce has finished loading
-		add_action('init', array($this, 'wordpress_loaded'));
-		add_action('woocommerce_init', array($this, 'woocommerce_loaded'), 1);
-
-		// called after all plugins have loaded
-		add_action('plugins_loaded', array($this, 'plugins_loaded'));
-
-		// called just before the woocommerce template functions are included
-		add_action('init', array($this, 'include_template_functions'), 20);
+		// Set all required hooks
+		$this->set_hooks();
 
 		// indicates we are running the admin
 		if(is_admin()) {
@@ -307,11 +308,11 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 	 * descendant classes to return a pre-configured instance of the plugin class,
 	 * complete with the appropriate settings controller.
 	 *
-	 * @return WC_Aelia_Plugin
-	 * @throws Aelia_NotImplementedException
+	 * @return Aelia\EDD\Aelia_Plugin
+	 * @throws Aelia\EDD\NotImplementedException
 	 */
 	public static function factory() {
-		throw new Aelia_NotImplementedException();
+		throw new NotImplementedException();
 	}
 
 	/**
@@ -323,33 +324,17 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 	}
 
 	/**
-	 * Performs operation when woocommerce has been loaded.
+	 * Performs operation when all plugins have been loaded.
 	 */
-	public function woocommerce_loaded() {
-		// Set all required hooks
-		$this->set_hooks();
+	public function plugins_loaded() {
+		$class = get_class($this);
+		load_plugin_textdomain(static::$text_domain, false, dirname(plugin_basename(__FILE__)) . '/languages/');
 
 		// Run updates only when in Admin area. This should occur automatically when
 		// plugin is activated, since it's done in the Admin area
 		if(is_admin()) {
 			$this->run_updates();
 		}
-	}
-
-	/**
-	 * Performs operation when all plugins have been loaded.
-	 */
-	public function plugins_loaded() {
-		$class = get_class($this);
-		load_plugin_textdomain(static::$text_domain, false, dirname(plugin_basename(__FILE__)) . '/languages/');
-	}
-
-	/**
-	 * Override any of the template functions from woocommerce/woocommerce-template.php
-	 * with our own template functions file
-	 */
-	public function include_template_functions() {
-
 	}
 
 	/**
@@ -365,7 +350,7 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 
 		if(!file_exists($file_to_load)) {
 			if($stop_on_error === true) {
-				$this->trigger_error(WC_Aelia_Messages::ERR_FILE_NOT_FOUND, E_USER_ERROR, array($file_to_load), true);
+				$this->trigger_error(Aelia\EDD\Messages::ERR_FILE_NOT_FOUND, E_USER_ERROR, array($file_to_load), true);
 			}
 			return false;
 		}
@@ -380,7 +365,7 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 	 */
 	public function register_widgets() {
 		// Register the required widgets
-		//$this->register_widget('WC_Aelia_Template_Widget');
+		//$this->register_widget('Aelia\EDD\Template_Widget');
 	}
 
 	/**
@@ -501,9 +486,9 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 			static::$requirements_errors[] = __('Plugin requires PHP 5.3 or greater.', static::$text_domain);
 		}
 
-		// Check for WooCommerce presence
-		if(!self::is_woocommerce_active()) {
-			static::$requirements_errors[] = __('WooCommerce plugin must be installed and activated.', static::$text_domain);
+		// Check for EDD presence
+		if(!self::is_edd_active()) {
+			static::$requirements_errors[] = __('Easy Digital Downloads plugin must be installed and activated.', static::$text_domain);
 		}
 
 		// Check that all required extensions are loaded
@@ -528,7 +513,7 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 		// Inline CSS styles have to be used because plugin is not loaded if
 		// requirements are missing, therefore the plugin's CSS files are ignored
 		echo '<div class="error fade">';
-		echo '<h4 class="wc_aelia message_header" style="margin: 1em 0 0 0">';
+		echo '<h4 class="edd_aeliamessage_header" style="margin: 1em 0 0 0">';
 		echo sprintf(__('Plugin %s could not be loaded due to missing requirements', static::$text_domain),
 								 static::$plugin_name);
 		echo '</h4>';
@@ -559,22 +544,23 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 	}
 
 	/**
-	 * Checks if WooCommerce plugin is active, either for the single site or, in
+	 * Checks if EDD plugin is active, either for the single site or, in
 	 * case of WPMU, for the whole network.
 	 *
 	 * @return bool
 	 */
-	public static function is_woocommerce_active() {
-		if(defined('WOOCOMMERCE_ACTIVE')) {
-			return WOOCOMMERCE_ACTIVE;
+	public static function is_edd_active() {
+		if(defined('EDD_ACTIVE')) {
+			return EDD_ACTIVE;
 		}
 
-		$woocommerce_plugin_key = 'woocommerce/woocommerce.php';
-		$result = self::is_plugin_active($woocommerce_plugin_key);
+		// Test if EDD is installed and active
+		if(self::is_plugin_active('Easy Digital Downloads')) {
+			define('EDD_ACTIVE', true);
+			return true;
+		}
 
-		define('WOOCOMMERCE_ACTIVE', $result);
-
-		return WOOCOMMERCE_ACTIVE;
+		return false;
 	}
 
 	/**
@@ -583,13 +569,14 @@ class WC_Aelia_Plugin implements IWC_Aelia_Plugin {
 	 * @param string plugin_key The key of the plugin to check.
 	 * @return bool
 	 */
-	public static function is_plugin_active($plugin_key) {
-		$result = in_array($plugin_key, get_option('active_plugins'));
-
-		if(!$result && function_exists('is_multisite') && is_multisite()) {
-			$result = array_key_exists($plugin_key, get_site_option('active_sitewide_plugins'));
+	public static function is_plugin_active($plugin_name) {
+		$plugins = get_plugins();
+		foreach($plugins as $path => $plugin){
+			if((strcasecmp($plugin['Name'], $plugin_name) === 0) && is_plugin_active($path)) {
+				return true;
+			}
 		}
 
-		return $result;
+		return false;
 	}
 }

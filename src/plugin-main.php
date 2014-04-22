@@ -5,7 +5,7 @@ if(!defined('ABSPATH')) exit; // Exit if accessed directly
 //define('SCRIPT_DEBUG', 1);
 //error_reporting(E_ALL);
 
-require_once('lib/classes/base/plugin/wc-aelia-plugin.php');
+require_once('lib/classes/base/plugin/aelia-plugin.php');
 
 /**
  * Template plugin.
@@ -13,8 +13,8 @@ require_once('lib/classes/base/plugin/wc-aelia-plugin.php');
 class Template_Plugin extends Aelia_Plugin {
 	public static $version = '0.1.0';
 
-	public static $plugin_slug = 'wc-aelia-template-plugin';
-	public static $text_domain = 'wc-aelia-template-plugin';
+	public static $plugin_slug = 'edd-aelia-template-plugin';
+	public static $text_domain = 'edd-aelia-template-plugin';
 	public static $plugin_name = 'Template Plugin';
 
 	public static function factory() {
