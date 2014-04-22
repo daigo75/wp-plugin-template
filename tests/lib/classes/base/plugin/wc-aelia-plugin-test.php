@@ -121,7 +121,7 @@ class Aelia_Plugin_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @expectedException Aelia_NotImplementedException
+	 * @expectedException Aelia\EDD\NotImplementedException
 	 */
 	public function test_factory() {
 		Aelia_Plugin::factory();
