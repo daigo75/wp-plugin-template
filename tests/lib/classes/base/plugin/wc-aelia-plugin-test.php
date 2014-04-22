@@ -75,11 +75,6 @@ class Aelia_Plugin_Test extends WP_UnitTestCase {
 		$this->assertTrue(true);
 	}
 
-	public function test_include_template_functions() {
-		$this->plugin->include_template_functions();
-		$this->assertTrue(true);
-	}
-
 	public function test_register_widgets() {
 		$this->plugin->register_widgets();
 		$this->assertTrue(true);
