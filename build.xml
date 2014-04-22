@@ -34,6 +34,8 @@
 
 		<!-- Delete plugin dependencies -->
 		<echo message="Deleting Easy Digital Downloads plugin from ${wp_unit_plugins_dir}..." />
+		<!-- Remove WooCommerce, just in case, to avoid potetial conflicts -->
+		<delete file="${wp_unit_plugins_dir}/woocommerce" followsymlinks="false" removenotfollowedsymlinks="true" quiet="true" />
 		<delete file="${wp_unit_plugins_dir}/easy-digital-downloads" followsymlinks="false" removenotfollowedsymlinks="true" quiet="true" />
 	</target>
 
@@ -47,8 +49,8 @@
 		<mkdir dir="${release_dir}"/>
 
 		<!-- Install plugin dependencies -->
-		<echo message="Using EDD plugin from ${edd_plugin_dir}..." />
 		<property name="edd_plugin_dir" value="${wordpress_plugins_dir}/${edd_plugin_dir}" />
+		<echo message="Using EDD plugin from ${edd_plugin_dir}..." />
 		<symlink link="${wp_unit_plugins_dir}/easy-digital-downloads"
 						 resource="${edd_plugin_dir}"
 						 overwrite="true"
