@@ -49,7 +49,7 @@
 		<mkdir dir="${release_dir}"/>
 
 		<!-- Install plugin dependencies -->
-		<property name="edd_plugin_dir" value="${wordpress_plugins_dir}/${edd_plugin_dir}" />
+		<property name="edd_plugin_dir" value="${wordpress_plugins_dir}/${easydigitaldownloads_plugin_dir}" />
 		<echo message="Using EDD plugin from ${edd_plugin_dir}..." />
 		<symlink link="${wp_unit_plugins_dir}/easy-digital-downloads"
 						 resource="${edd_plugin_dir}"
