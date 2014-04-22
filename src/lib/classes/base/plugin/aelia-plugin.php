@@ -570,6 +570,11 @@ class Aelia_Plugin implements IAelia_Plugin {
 	 * @return bool
 	 */
 	public static function is_plugin_active($plugin_name) {
+		// Require necessary WP Core files
+		if(!function_exists('get_plugins')) {
+			require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+		}
+
 		$plugins = get_plugins();
 		foreach($plugins as $path => $plugin){
 			if((strcasecmp($plugin['Name'], $plugin_name) === 0) && is_plugin_active($path)) {

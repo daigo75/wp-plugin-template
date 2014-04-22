@@ -565,7 +565,7 @@ class Settings_Renderer {
 	 *
 	 * @param Aelia\EDD\Settings settings_controller The settings controller.
 	 */
-	public function init_settings_page(Aelia\EDD\Settings $settings_controller) {
+	public function init_settings_page(\Aelia\EDD\Settings $settings_controller) {
 		$this->_settings_controller = $settings_controller;
 		$this->_settings_key = $this->_settings_controller->settings_key;
 		$this->_textdomain = $this->_settings_controller->textdomain;
