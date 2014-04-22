@@ -30,7 +30,7 @@ class Settings {
 	 * @param string renderer The renderer to use to generate the settings page.
 	 * @return Aelia\EDD\Settings
 	 */
-	public function __construct($settings_key, $textdomain = '', Aelia\EDD\Settings_Renderer $renderer) {
+	public function __construct($settings_key, $textdomain = '', Settings_Renderer $renderer) {
 		$this->settings_key = $settings_key;
 		$this->textdomain = $textdomain;
 		$this->_renderer = $renderer;

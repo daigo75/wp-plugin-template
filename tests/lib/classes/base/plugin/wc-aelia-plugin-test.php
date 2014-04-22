@@ -53,7 +53,7 @@ class Aelia_Plugin_Test extends WP_UnitTestCase {
 	}
 
 	public function test_get_error_message() {
-		$message = $this->plugin->get_error_message(Aelia\EDD\Messages::ERR_FILE_NOT_FOUND);
+		$message = $this->plugin->get_error_message(Messages::ERR_FILE_NOT_FOUND);
 		$this->assertTrue(!empty($message));
 	}
 

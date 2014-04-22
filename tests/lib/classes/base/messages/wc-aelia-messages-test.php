@@ -26,7 +26,7 @@ class Messages_Test extends WP_UnitTestCase {
 
 	public function test_load_error_messages() {
 		$this->aelia_messages->load_error_messages();
-		$message = $this->aelia_messages->get_error_message(Aelia\EDD\Messages::ERR_FILE_NOT_FOUND);
+		$message = $this->aelia_messages->get_error_message(Messages::ERR_FILE_NOT_FOUND);
 		$this->assertTrue(!empty($message));
 	}
 }
