@@ -1,8 +1,12 @@
-<?php if(!defined('ABSPATH')) exit; // Exit ifaccessed directly
+<?php
+namespace Aelia\EDD;
+if(!defined('ABSPATH')) exit; // Exit ifaccessed directly
 
-if(class_exists('Aelia_SessionManager')) {
+if(class_exists('Aelia\EDD\Aelia_SessionManager')) {
 	return;
 }
+
+use \Easy_Digital_Downloads;
 
 /**
  * A simple Session handler. Compatible with both WooCommerce 2.0 and earlier.
@@ -16,26 +20,7 @@ class Aelia_SessionManager {
 	 * @param mixed value The value to set.
 	 */
 	public static function set_value($key, $value) {
-		global $woocommerce;
-
-		// WooCommerce 2.1
-		if(version_compare($woocommerce->version, '2.1', '>=')) {
-			if(isset($woocommerce->session)) {
-				$woocommerce->session->set($key, $value);
-			}
-			return;
-		}
-
-		// WooCommerce 2.0
-		if(version_compare($woocommerce->version, '2.0', '>=')) {
-			if(isset($woocommerce->session)) {
-				$woocommerce->session->$key = $value;
-			}
-			return;
-		}
-
-		// WooCommerce < 2.0
-		$_SESSION[$key] = $value;
+		Easy_Digital_Downloads::instance()->session->set($key, $value);
 	}
 
 	/**
@@ -49,36 +34,13 @@ class Aelia_SessionManager {
 	 * @return mixed The value associated with the key, or the default.
 	 */
 	public static function get_value($key, $default = null, $remove_after_get = false) {
-		global $woocommerce;
-
-		$result = null;
-
-		// WooCommerce 2.1
-		if(is_null($result) && version_compare($woocommerce->version, '2.1', '>=')) {
-			if(!isset($woocommerce->session)) {
-				return $default;
-			}
-			$result = @$woocommerce->session->get($key);
-		}
-
-		// WooCommerce 2.0
-		if(is_null($result) && version_compare($woocommerce->version, '2.0', '>=')) {
-			if(!isset($woocommerce->session)) {
-				return $default;
-			}
-			$result = @$woocommerce->session->$key;
-		}
-
-		if(is_null($result) && version_compare($woocommerce->version, '1.6', '<=')) {
-			// WooCommerce < 2.0
-			$result = @$_SESSION[$key];
-		}
+		$result = Easy_Digital_Downloads::instance()->session->get($key);
 
 		if($remove_after_get) {
 			self::delete_value($key);
 		}
 
-		return empty($result) ? $default : $result;
+		return ($result === false) ? $default : $result;
 	}
 
 	/**
@@ -88,28 +50,6 @@ class Aelia_SessionManager {
 	 * @param string key The Key of the value to retrieve.
 	 */
 	public static function delete_value($key) {
-		global $woocommerce;
-
-		// WooCommerce 2.1
-		if(version_compare($woocommerce->version, '2.1', '>=')) {
-			if(isset($woocommerce->session)) {
-				$woocommerce->session->set($key, null);
-			}
-			return;
-		}
-
-		// WooCommerce 2.0
-		if(version_compare($woocommerce->version, '2.0', '>=')) {
-			if(isset($woocommerce->session)) {
-				unset($woocommerce->session->$key);
-			}
-			return;
-		}
-
-		// WooCommerce < 2.0
-		if(version_compare($woocommerce->version, '1.6', '<=')) {
-			unset($_SESSION[$key]);
-			return;
-		}
+		Easy_Digital_Downloads::instance()->session->set($key, false);
 	}
 }
