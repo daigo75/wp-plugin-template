@@ -1,6 +1,11 @@
 <?php
 if(!defined('ABSPATH')) exit; // Exit if accessed directly
 
+// Do not try to redeclare the class
+if(class_exists('Aelia_EDD_RequirementsChecks')) {
+	return;
+}
+
 /**
  * Checks that plugin's requirements are met.
  */
