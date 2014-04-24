@@ -23,7 +23,7 @@ class Aelia_EDD_RequirementsChecks {
 	// @var array An array of WordPress plugins (name => version) required by the plugin.
 	protected $required_plugins = array(
 		'Easy Digital Downloads' => '1.9.8',
-		'Aelia Foundation Classes for EDD' => '0.2',
+		'Aelia Foundation Classes for Easy Digital Downloads' => '0.2',
 	);
 
 	// @var array Holds a list of the errors related to missing requirements
