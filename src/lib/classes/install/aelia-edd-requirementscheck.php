@@ -26,6 +26,9 @@ class Aelia_EDD_RequirementsChecks {
 		'Aelia Foundation Classes for Easy Digital Downloads' => '0.2',
 	);
 
+	// @var array An array with the details of the required plugins.
+	protected $required_plugins_info = array();
+
 	// @var array Holds a list of the errors related to missing requirements
 	protected $requirements_errors = array();
 
@@ -59,8 +62,11 @@ class Aelia_EDD_RequirementsChecks {
 	/**
 	 * Checks that the necessary plugins are installed, and that their version is
 	 * the expected one.
+	 *
+	 * @param bool autoload_plugins Indicates if the required plugins should be
+	 * loaded automatically, if requirements checks pass.
 	 */
-	protected function check_required_plugins() {
+	protected function check_required_plugins($autoload_plugins = true) {
 		foreach($this->required_plugins as $plugin_name => $plugin_version) {
 			$plugin_info = $this->is_plugin_active($plugin_name);
 
@@ -94,10 +100,14 @@ class Aelia_EDD_RequirementsChecks {
 
 		$result = empty($this->requirements_errors);
 
-		if(!$result) {
+		if($result) {
+			$this->load_required_plugins();
+		}
+		else {
 			// If requirements are missing, display the appropriate notices
 			add_action('admin_notices', array($this, 'plugin_requirements_notices'));
 		}
+
 		return $result;
 	}
 
@@ -136,6 +146,10 @@ class Aelia_EDD_RequirementsChecks {
 		$plugins = get_plugins();
 		foreach($plugins as $path => $plugin_info){
 			if((strcasecmp($plugin_info['Name'], $plugin_name) === 0) && is_plugin_active($path)) {
+				$plugin_info['Path'] = $path;
+
+				$this->required_plugins_info[$plugin_name] = $plugin_info;
+
 				return $plugin_info;
 			}
 		}
@@ -171,5 +185,16 @@ class Aelia_EDD_RequirementsChecks {
 		echo '</li>';
 		echo '</ul>';
 		echo '</div>';
+	}
+
+	/**
+	 * Loads the required plugins.
+	 */
+	public function load_required_plugins() {
+		foreach($this->required_plugins_info as $plugin_name => $plugin_info) {
+			// Debug
+			//var_dump(ABSPATH . 'wp-content/plugins/' . $plugin_info['Path']);
+			require_once(ABSPATH . 'wp-content/plugins/' . $plugin_info['Path']);
+		}
 	}
 }
