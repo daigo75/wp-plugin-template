@@ -98,6 +98,7 @@ class Aelia_EDD_RequirementsChecks {
 			// If requirements are missing, display the appropriate notices
 			add_action('admin_notices', array($this, 'plugin_requirements_notices'));
 		}
+		return $result;
 	}
 
 	/**
