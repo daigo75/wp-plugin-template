@@ -12,7 +12,12 @@ class Aelia_EDD_RequirementsChecks {
 
 	// @var array An array of PHP extensions required by the plugin
 	protected $required_extensions = array(
-		'curly',
+		//'curl',
+	);
+
+	// @var array An array of WordPress plugins (name => version) required by the plugin.
+	protected $required_plugins = array(
+		'Easy Digital Downloads' => '1.9.8',
 	);
 
 
@@ -31,19 +36,34 @@ class Aelia_EDD_RequirementsChecks {
 	 * extension that is not loaded.
 	 */
 	protected function check_required_extensions() {
-		$errors = array();
 		foreach($this->required_extensions as $extension) {
 			if(!extension_loaded($extension)) {
-				$errors[] = sprintf(__('Plugin requires "%s" PHP extension.', $this->text_domain),
-														$extension);
+				$this->requirements_errors[] = sprintf(__('Plugin requires "%s" PHP extension.', $this->text_domain),
+																							 $extension);
 			}
 		}
-
-		return $errors;
 	}
 
+	/**
+	 * Checks that the necessary plugins are installed, and that their version is
+	 * the expected one.
+	 */
 	protected function check_required_plugins() {
+		foreach($this->required_plugins as $plugin_name => $plugin_version) {
+			$plugin_info = $this->is_plugin_active($plugin_name);
 
+			if(is_array($plugin_info)) {
+				if(version_compare($plugin_info['Version'], $plugin_version, '<')) {
+					$this->requirements_errors[] = sprintf(__('Plugin "%s" must be version "%s" or later.', $this->text_domain),
+																								 $plugin_name,
+																								 $plugin_version);
+				}
+			}
+			else {
+				$this->requirements_errors[] = sprintf(__('Plugin "%s" must be installed and activated.', $this->text_domain),
+																							 $plugin_name);
+			}
+		}
 	}
 
 	/**
@@ -57,14 +77,8 @@ class Aelia_EDD_RequirementsChecks {
 			$this->requirements_errors[] = __('Plugin requires PHP 5.3 or greater.', $this->text_domain);
 		}
 
-		// Check for EDD presence
-		if(!$this->is_edd_active()) {
-			$this->requirements_errors[] = __('Easy Digital Downloads plugin must be installed and activated.', $this->text_domain);
-		}
-
-		$extension_errors = $this->check_required_extensions();
-
-		$this->requirements_errors = array_merge($this->requirements_errors, $extension_errors);
+		$this->check_required_extensions();
+		$this->check_required_plugins();
 
 		$result = empty($this->requirements_errors);
 
@@ -80,13 +94,13 @@ class Aelia_EDD_RequirementsChecks {
 	 *
 	 * @return bool
 	 */
-	public function is_edd_active() {
+	public static function is_edd_active() {
 		if(defined('EDD_ACTIVE')) {
 			return EDD_ACTIVE;
 		}
 
 		// Test if EDD is installed and active
-		if($this->is_plugin_active('Easy Digital Downloads')) {
+		if(self::factory()->is_plugin_active('Easy Digital Downloads')) {
 			define('EDD_ACTIVE', true);
 			return true;
 		}
@@ -107,9 +121,9 @@ class Aelia_EDD_RequirementsChecks {
 		}
 
 		$plugins = get_plugins();
-		foreach($plugins as $path => $plugin){
-			if((strcasecmp($plugin['Name'], $plugin_name) === 0) && is_plugin_active($path)) {
-				return true;
+		foreach($plugins as $path => $plugin_info){
+			if((strcasecmp($plugin_info['Name'], $plugin_name) === 0) && is_plugin_active($path)) {
+				return $plugin_info;
 			}
 		}
 
