@@ -53,11 +53,5 @@ class Template_Plugin extends Aelia_Plugin {
 	}
 }
 
-if(Template_Plugin::check_requirements() == true) {
-	// Instantiate plugin and add it to the set of globals
-	$GLOBALS[Template_Plugin::$plugin_slug] = Template_Plugin::factory();
-}
-else {
-	// If requirements are missing, display the appropriate notices
-	add_action('admin_notices', array('Template_Plugin', 'plugin_requirements_notices'));
-}
+// Instantiate plugin and add it to the set of globals
+$GLOBALS[Template_Plugin::$plugin_slug] = Template_Plugin::factory();

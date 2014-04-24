@@ -27,7 +27,7 @@ require_once('general_functions.php');
  */
 class Aelia_Plugin implements IAelia_Plugin {
 	// @var string The plugin version.
-	public static $version = '0.8.2';
+	public static $version = '0.1.0';
 
 	// @var string The plugin slug
 	public static $plugin_slug = 'edd-aelia-plugin';
@@ -541,47 +541,5 @@ class Aelia_Plugin implements IAelia_Plugin {
 		if(!defined('WP_UNINSTALL_PLUGIN')) {
 			return;
 		}
-	}
-
-	/**
-	 * Checks if EDD plugin is active, either for the single site or, in
-	 * case of WPMU, for the whole network.
-	 *
-	 * @return bool
-	 */
-	public static function is_edd_active() {
-		if(defined('EDD_ACTIVE')) {
-			return EDD_ACTIVE;
-		}
-
-		// Test if EDD is installed and active
-		if(self::is_plugin_active('Easy Digital Downloads')) {
-			define('EDD_ACTIVE', true);
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Checks if a plugin is active and returns a value to indicate it.
-	 *
-	 * @param string plugin_key The key of the plugin to check.
-	 * @return bool
-	 */
-	public static function is_plugin_active($plugin_name) {
-		// Require necessary WP Core files
-		if(!function_exists('get_plugins')) {
-			require_once(ABSPATH . 'wp-admin/includes/plugin.php');
-		}
-
-		$plugins = get_plugins();
-		foreach($plugins as $path => $plugin){
-			if((strcasecmp($plugin['Name'], $plugin_name) === 0) && is_plugin_active($path)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 }
