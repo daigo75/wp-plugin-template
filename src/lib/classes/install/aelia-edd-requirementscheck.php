@@ -29,6 +29,13 @@ class Aelia_EDD_RequirementsChecks {
 	// @var array Holds a list of the errors related to missing requirements
 	protected $requirements_errors = array();
 
+	/**
+	 * Factory method. It MUST be copied to every descendant class, as it has to
+	 * be compatible with PHP 5.2 and earlier, so that the class can be instantiated
+	 * in any case and and gracefully tell the user if PHP version is insufficient.
+	 *
+	 * @return Aelia_EDD_RequirementsChecks
+	 */
 	public function factory() {
 		$instance = new self();
 		return $instance;
