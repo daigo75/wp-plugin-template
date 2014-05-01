@@ -39,7 +39,7 @@ class Aelia_EDD_RequirementsChecks {
 	 *
 	 * @return Aelia_EDD_RequirementsChecks
 	 */
-	public function factory() {
+	public static function factory() {
 		$instance = new self();
 		return $instance;
 	}
