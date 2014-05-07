@@ -67,19 +67,35 @@ class Aelia_EDD_RequirementsChecks {
 	 * loaded automatically, if requirements checks pass.
 	 */
 	protected function check_required_plugins($autoload_plugins = true) {
-		foreach($this->required_plugins as $plugin_name => $plugin_version) {
+		foreach($this->required_plugins as $plugin_name => $plugin_details) {
 			$plugin_info = $this->is_plugin_active($plugin_name);
 
+			// If plugin_details is not an array, it's assumed to be a string containing
+			// the required plugin version
+			if(!is_array($plugin_details)) {
+				$plugin_details = array(
+					'version' => $plugin_details,
+				);
+			}
+
+			$error_message = '';
 			if(is_array($plugin_info)) {
-				if(version_compare($plugin_info['Version'], $plugin_version, '<')) {
-					$this->requirements_errors[] = sprintf(__('Plugin "%s" must be version "%s" or later.', $this->text_domain),
-																								 $plugin_name,
-																								 $plugin_version);
-				}
+				if(version_compare($plugin_info['Version'], $plugin_details['version'], '<')) {
+					$error_message = sprintf(__('Plugin "%s" must be version "%s" or later.', $this->text_domain),
+																	 $plugin_name,
+																	 $plugin_details['version']);
+					}
 			}
 			else {
-				$this->requirements_errors[] = sprintf(__('Plugin "%s" must be installed and activated.', $this->text_domain),
-																							 $plugin_name);
+				$error_message = sprintf(__('Plugin "%s" must be installed and activated.', $this->text_domain),
+																 $plugin_name);
+			}
+
+			if(!empty($error_message)) {
+				if(isset($plugin_details['extra_info'])) {
+					$error_message .= ' ' . $plugin_details['extra_info'];
+				}
+				$this->requirements_errors[] = $error_message;
 			}
 		}
 	}
